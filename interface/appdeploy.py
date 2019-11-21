@@ -6,6 +6,8 @@ import redis
 from rq import Queue
 from task import background_task
 import subprocess
+import yaml
+import datetime
 
 app = Flask(__name__)
 app.secret_key = b'KURAMA\n\xec]/'
@@ -140,6 +142,65 @@ def start_pipeline():
 
         SERVICES_REQUIRED = []
         return '<h1> Pipeline Services has started </h1>'
+
+
+def calculate_hours(start_time):
+    delta_hours = 0
+    if start_time != 'None':
+        start_time = start_time.split('.')[0]
+        tdelta = datetime.datetime.now() - datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        delta_hours = int(tdelta.total_seconds() / 3600)
+    return delta_hours
+
+
+def calculate_pricing(hours, unit_price):
+    return hours * unit_price
+
+
+def get_instances():   
+    servicelist  = ['msdb', 'msdash', 'msalert', 'msjson']
+    result = {}
+    services = None
+    overall_cost = 0
+    pricing = {
+        'msdb': 0.3,
+        'msdash': 0.25,
+        'msalert': 0.2,
+        'msjson': 0.15,
+    }
+    with open("servicelist.yaml", 'r') as stream:
+        try:
+            services = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    for service, instances in services.items():
+        totalhours = 0
+        tmp_time = {}
+        if service in servicelist:
+            instance_count = 0
+            for instance in instances:
+                # if(str(type(instance))) == "<class 'dict'>":
+                instance_count = instance_count + 1
+                for key, time in instance.items():
+                    hours = calculate_hours(time)
+                    totalhours = totalhours + hours
+                    tmp_time[key] = hours
+            tmp_time['instance_count'] = instance_count
+            tmp_time['total_hours'] = totalhours
+            tmp_time['unit_price'] = pricing[service]
+            cost = calculate_pricing(totalhours, pricing[service])
+            tmp_time['total_price'] = cost
+            result[service] = tmp_time
+            overall_cost = overall_cost + cost
+    result['Total'] = dict({'net_total': overall_cost})
+    return result
+        
+        
+@app.route('/pricing')
+def pricing():    
+    service_stats = get_instances()
+    print(service_stats)
+    return render_template('pricing.html', service_stats=service_stats)
 
 
 if __name__ == '__main__':
