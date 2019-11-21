@@ -2,11 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import os
-import subprocess
 import redis
 from rq import Queue
 from task import background_task
-import asyncio
 import subprocess
 
 app = Flask(__name__)
@@ -85,7 +83,9 @@ def upload_success():
             print(f'Reading python file name {p_file}')
             py_file = os.path.join(full_path[:-7], p_file)
             print(f'Running the {py_file}')
-            p = subprocess.Popen(f'python3 {py_file}', shell=True)
+            with open('job.sh', 'w') as pp:
+                pp.write(f'#!/usr/bin/env bash\npython3 {py_file}')
+            # runjob()
             flash(f'App {file.filename} successfully uploaded')
             return redirect(url_for('app_upload'))
 
@@ -143,4 +143,4 @@ def start_pipeline():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
