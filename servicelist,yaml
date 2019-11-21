@@ -1,0 +1,17 @@
+msdb:
+  - 'http://localhost:5003' : None
+
+msdash:
+  - 'http://localhost:5001' : None
+
+msalert:
+  - 'http://localhost:5005' : None
+
+msjson:
+  - 'http://localhost:5004' : None
+
+mstream:
+  - 'http://localhost:5002' : None
+
+msinterface:
+  - 'http://localhost:5000' : None

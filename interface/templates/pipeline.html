@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Pipeline</title>
+</head>
+<body>
+<h1> Select The services you want in your pipeline</h1>
+<form action="/initpipeline" method="post">
+    <input type="checkbox" name="db" value="db"> Persist Logs to POSTGRESQL<br>
+    <input type="checkbox" name="alert" value="alert"> Alert Service<br>
+    <input type="checkbox" name="json" value="json"> Get JSON of all the logs<br>
+    <input type="checkbox" name="dash" value="dash"> Dashboard Service<br>
+  <input type="submit" value="Submit">
+</form>
+</body>
+</html>
