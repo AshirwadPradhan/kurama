@@ -127,8 +127,19 @@ def start_pipeline():
     else:
         jobs = []
         for service in SERVICES_REQUIRED:
+            with open("../servicelist.yaml", 'r') as stream:
+                try:
+                    services = yaml.safe_load(stream)
+                except yaml.YAMLError as exc:
+                    print(exc)
+
+            # servicelist = ['msdb', 'msdash', 'msalert', 'msjson']
+            # for service, instances in services.items():
+            #     if service in servicelist:
+            #         instance_count = 0
+
             if service == 'dash':
-                job = q.enqueue(background_task, 'http://localhost:5001/dashboard')
+                job = q.enqueue(background_task, 'http://172.17.48.199:5001/dashboard')
                 jobs.append(job)
             if service == 'json':
                 job = q.enqueue(background_task, 'http://localhost:5004/kjson')
@@ -157,8 +168,8 @@ def calculate_pricing(hours, unit_price):
     return hours * unit_price
 
 
-def get_instances():   
-    servicelist  = ['msdb', 'msdash', 'msalert', 'msjson']
+def get_instances():
+    servicelist = ['msdb', 'msdash', 'msalert', 'msjson']
     result = {}
     services = None
     overall_cost = 0
@@ -168,7 +179,7 @@ def get_instances():
         'msalert': 0.2,
         'msjson': 0.15,
     }
-    with open("servicelist.yaml", 'r') as stream:
+    with open("../servicelist.yaml", 'r') as stream:
         try:
             services = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
@@ -194,10 +205,10 @@ def get_instances():
             overall_cost = overall_cost + cost
     result['Total'] = dict({'net_total': overall_cost})
     return result
-        
-        
+
+
 @app.route('/pricing')
-def pricing():    
+def pricing():
     service_stats = get_instances()
     print(service_stats)
     return render_template('pricing.html', service_stats=service_stats)

@@ -1,6 +1,7 @@
 import psycopg2
 import requests
 from flask import Flask
+import time
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ def post_db():
     with requests.get('http://localhost:5002/stream', stream=True) as req:
         buffer = ''
         for chunk in req.iter_content(chunk_size=1):
+            time.sleep(0.8)
             if chunk.endswith(b'\n'):
                 try:
                     t = str(buffer)
