@@ -134,9 +134,14 @@ def start_pipeline():
                     print(exc)
 
             # servicelist = ['msdb', 'msdash', 'msalert', 'msjson']
-            # for service, instances in services.items():
-            #     if service in servicelist:
-            #         instance_count = 0
+            for ser, instances in services.items():
+                if ser in SERVICES_REQUIRED:
+                    for i in instances:
+                        k, v = i.popitem()
+                        i[str(k)] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # print(services)
+            with open("../servicelist.yaml", 'w') as st:
+                yaml.dump(services, st)
 
             if service == 'dash':
                 job = q.enqueue(background_task, 'http://172.17.48.199:5001/dashboard')

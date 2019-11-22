@@ -1,18 +1,12 @@
-msdb:
-  - 'http://localhost:5003' : '2019-11-21 20:38:08.998789'
-  - 'http://localhost:5030' : '2019-11-20 20:38:08.998789'
-
-msdash:
-  - 'http://localhost:5001' : '2019-11-21 20:28:08.998789'
-
 msalert:
-  - 'http://localhost:5005' : None
-
-msjson:
-  - 'http://localhost:5004' : None
-
-mstream:
-  - 'http://localhost:5002' : None
-
+- http://localhost:5005: '2019-11-22 10:47:29'
+msdash:
+- http://localhost:5001: '2019-11-22 10:47:29'
+msdb:
+- http://localhost:5003: '2019-11-22 10:47:29'
 msinterface:
-  - 'http://localhost:5000' : None
+- http://localhost:5000: None
+msjson:
+- http://localhost:5004: '2019-11-22 10:47:29'
+mstream:
+- http://localhost:5002: None
